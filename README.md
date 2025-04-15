@@ -18,37 +18,53 @@ Todas as requisições são do tipo **GET**.
 1. Instale as dependências:
 ```bash
 npm install express nodemon
-
 ```
 2.Execute o servidor:
 
 Rodando com node:
+```bash
 npm run dev
+```
 
 Rodando com node:
+```bash
 npm start
-
 ```
 
 📌 Endpoints da API (GET)
-🔹 GET /musicas
+🔹 GET
+```bash
+ /musicas
+```
 Retorna todos os músicos cadastrados.
 
-🔹 GET /musicas/:id
+🔹 GET 
+ ```bash
+ /musicas/:id
+```
 Retorna os dados de um músico específico pelo ID.
 
-🔹 GET /musicas/artista/:nome
+🔹 GET 
+```bash
+/musicas/artista/:nome
+```
 Retorna os dados de um artista específico pelo nome.
 Exemplo: GET /musicas/artista/Elis Regina
 
-🔹 GET /musicas/banda/:banda
+🔹 GET 
+```bash
+/musicas/banda/:banda
+```
 Retorna todos os músicos de uma determinada banda.
 Exemplo: GET /musicas/banda/O Rappa
 
-🔹 GET /musicas/instrumento/:tipo
+🔹 GET 
+```bash
+/musicas/instrumento/:tipo
+```
 Retorna todos os músicos de um determinado instrumento.
 
-```
+
 ####📄 Observações
 Esta API foi desenvolvida para fins educacionais.
 
