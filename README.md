@@ -65,7 +65,7 @@ Exemplo: GET /musicas/banda/O Rappa
 Retorna todos os músicos de um determinado instrumento.
 
 
-####📄 Observações
+## 📄 Observações
 Esta API foi desenvolvida para fins educacionais.
 
 Todos os dados são mockados (armazenados em um array local).
