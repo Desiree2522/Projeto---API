@@ -32,6 +32,7 @@ npm start
 ```
 
 📌 Endpoints da API (GET)
+
 🔹 GET
 ```bash
  /musicas
