@@ -103,5 +103,42 @@
       artista: "Dadi Carvalho",
       albuns: ["Novos Baianos F.C.", "Acabou Chorare"],
       musico: "baixista"
+    },
+    {
+      id: 16,
+      banda: "Síntese do Soul",
+      artista: "Tim Maia",
+      albuns: ["Tim Maia", "Racional Vol. 1"],
+      musico: "vocalista"
+    },
+    {
+      id: 17,
+      banda: "Harmonia do Brasil",
+      artista: "Djavan",
+      albuns: ["A Voz, o Violão, a Música de Djavan", "Luz"],
+      musico: "guitarrista"
+    },
+    {
+      id: 18,
+      banda: "Tropicalismo em Cena",
+      artista: "Caetano Veloso",
+      albuns: ["Transa", "Livro"],
+      musico: "vocalista"
+    },
+    {
+      id: 19,
+      banda: "Rainha do Rock Brasileiro",
+      artista: "Rita Lee",
+      albuns: ["Fruto Proibido", "Rita Lee"],
+      musico: "vocalista"
+    },
+    {
+      id: 20,
+      banda: "Ritmos do Brasil",
+      artista: "Gilberto Gil",
+      albuns: ["Refazenda", "Realce"],
+      musico: "vocalista"
     }
+    
+    
   ];
