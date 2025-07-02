@@ -1,85 +1,234 @@
-// Importa o banco de dados de músicas que está armazenado em 'db.js'
-import { musicas } from "../database/db.js";
+import { PrismaClient } from '@prisma/client';
 
-// Classe responsável por gerenciar as músicas e as respostas da API
+const prisma = new PrismaClient();
+
 class MusicaController {
-   // Método para retornar todas as músicas
-   // Este método é acessado na rota principal ("/") e retorna todas as músicas cadastradas
-   getAllmusicas(req, res) {
-      res.status(200).json(musicas);  // Retorna as músicas com status 200 (OK)
+   /**
+    * @swagger
+    * /:
+    *   get:
+    *     summary: Lista todas as músicas
+    *     responses:
+    *       200:
+    *         description: Lista de músicas retornada com sucesso
+    */
+   async getAllmusicas(req, res) {
+      const musicas = await prisma.musica.findMany();
+      res.status(200).json(musicas);
    }
-    
-   // Método para retornar uma música específica pelo ID
-   // A URL espera um parâmetro 'id' para procurar a música
-   getMusicaById(req, res) {
-      const { id } = req.params;  // Extrai o parâmetro 'id' da URL
-      // Encontra a música que corresponde ao 'id'
-      const musicaEncontrada = musicas.find(m => m.id == id);
-      // Se a música não for encontrada, retorna um erro 404
+
+   /**
+    * @swagger
+    * /musica/{id}:
+    *   get:
+    *     summary: Busca uma música pelo ID
+    *     parameters:
+    *       - in: path
+    *         name: id
+    *         required: true
+    *         schema:
+    *           type: integer
+    *     responses:
+    *       200:
+    *         description: Música encontrada
+    *       404:
+    *         description: Música não encontrada
+    */
+   async getMusicaById(req, res) {
+      const { id } = req.params;
+      const musicaEncontrada = await prisma.musica.findUnique({
+         where: { id: Number(id) },
+      });
       if (!musicaEncontrada) {
          return res.status(404).json({ message: "Música não encontrada" });
       }
-      // Se a música for encontrada, retorna a música com status 200
       res.status(200).json(musicaEncontrada);
    }
 
-   // Método para retornar músicas de um artista específico
-   // A URL espera um parâmetro 'artista' e retorna todas as músicas desse artista
-   getMusicaByArtista(req, res) {
-      const { artista } = req.params;  // Extrai o parâmetro 'artista' da URL
-      // Filtra as músicas que pertencem ao artista informado (ignora maiúsculas/minúsculas)
-      const musicasEncontradas = musicas.filter(m => m.artista.toLowerCase() === artista.toLowerCase());
-      // Se não encontrar nenhuma música, retorna erro 404
+   /**
+    * @swagger
+    * /musica/artista/{artista}:
+    *   get:
+    *     summary: Busca músicas por artista
+    */
+   async getMusicaByArtista(req, res) {
+      const { artista } = req.params;
+      const musicasEncontradas = await prisma.musica.findMany({
+         where: { artista: { equals: artista, mode: 'insensitive' } },
+      });
       if (musicasEncontradas.length === 0) {
          return res.status(404).json({ message: "Artista não encontrado" });
       }
-      // Se encontrar, retorna as músicas com status 200
       res.status(200).json(musicasEncontradas);
    }
-    
-   // Método para retornar músicas de um álbum específico
-   // A URL espera um parâmetro 'album' e retorna todas as músicas desse álbum
-   getMusicaByAlbum(req, res) {
-      const { album } = req.params;  // Extrai o parâmetro 'album' da URL
-      // Filtra as músicas que pertencem ao álbum especificado
-      const musicasEncontradas = musicas.filter(m => m.albuns.includes(album));  // 'albuns' é uma lista de álbuns
-      // Se não encontrar nenhuma música, retorna erro 404
+
+   /**
+    * @swagger
+    * /musica/album/{album}:
+    *   get:
+    *     summary: Busca músicas por álbum
+    */
+   async getMusicaByAlbum(req, res) {
+      const { album } = req.params;
+      const musicasEncontradas = await prisma.musica.findMany({
+         where: { albuns: { has: album } },
+      });
       if (musicasEncontradas.length === 0) {
          return res.status(404).json({ message: "Álbum não encontrado" });
       }
-      // Se encontrar, retorna as músicas com status 200
       res.status(200).json(musicasEncontradas);
    }
-    
-   // Método para retornar músicas de uma banda específica
-   // A URL espera um parâmetro 'banda' e retorna todas as músicas dessa banda
-   getMusicaByBanda(req, res) {
-      const { banda } = req.params;  // Extrai o parâmetro 'banda' da URL
-      // Filtra as músicas que pertencem à banda informada (comparação sem considerar maiúsculas/minúsculas)
-      const musicasEncontradas = musicas.filter(m => m.banda.toLowerCase() === banda.toLowerCase());
-      // Se não encontrar nenhuma música, retorna erro 404
+
+   /**
+    * @swagger
+    * /musica/banda/{banda}:
+    *   get:
+    *     summary: Busca músicas por banda
+    */
+   async getMusicaByBanda(req, res) {
+      const { banda } = req.params;
+      const musicasEncontradas = await prisma.musica.findMany({
+         where: { banda: { equals: banda, mode: 'insensitive' } },
+      });
       if (musicasEncontradas.length === 0) {
          return res.status(404).json({ message: "Banda não encontrada" });
       }
-      // Se encontrar, retorna as músicas com status 200
       res.status(200).json(musicasEncontradas);
    }
 
-   // Método para retornar músicas de um músico específico
-   // A URL espera um parâmetro 'musico' e retorna todas as músicas desse músico
-   getMusicaByMusico(req, res) {
-      const { musico } = req.params;  // Extrai o parâmetro 'musico' da URL
-      // Filtra as músicas que pertencem ao músico informado (comparação sem considerar maiúsculas/minúsculas)
-      const musicasEncontradas = musicas.filter(m => m.musico.toLowerCase() === musico.toLowerCase());
-      // Se não encontrar nenhuma música, retorna erro 404
+   /**
+    * @swagger
+    * /musica/musico/{musico}:
+    *   get:
+    *     summary: Busca músicas por músico
+    */
+   async getMusicaByMusico(req, res) {
+      const { musico } = req.params;
+      const musicasEncontradas = await prisma.musica.findMany({
+         where: { musico: { equals: musico, mode: 'insensitive' } },
+      });
       if (musicasEncontradas.length === 0) {
          return res.status(404).json({ message: "Músico não encontrado" });
       }
-      // Se encontrar, retorna as músicas com status 200
       res.status(200).json(musicasEncontradas);
+   }
+
+   /**
+    * @swagger
+    * /musica:
+    *   post:
+    *     summary: Cria uma nova música
+    *     requestBody:
+    *       required: true
+    *       content:
+    *         application/json:
+    *           schema:
+    *             type: object
+    *             properties:
+    *               id:
+    *                 type: integer
+    *               banda:
+    *                 type: string
+    *               artista:
+    *                 type: string
+    *               musico:
+    *                 type: string
+    *               albuns:
+    *                 type: array
+    *                 items:
+    *                   type: string
+    *     responses:
+    *       201:
+    *         description: Música criada com sucesso
+    */
+   async createMusica(req, res) {
+      const { id, banda, artista, musico, albuns } = req.body;
+      try {
+         const novaMusica = await prisma.musica.create({
+            data: { id, banda, artista, musico, albuns },
+         });
+         res.status(201).json(novaMusica);
+      } catch (error) {
+         res.status(400).json({ message: "Erro ao criar música", error: error.message });
+      }
+   }
+
+   /**
+    * @swagger
+    * /musica/{id}:
+    *   put:
+    *     summary: Atualiza uma música existente
+    *     parameters:
+    *       - in: path
+    *         name: id
+    *         required: true
+    *         schema:
+    *           type: integer
+    *     requestBody:
+    *       required: true
+    *       content:
+    *         application/json:
+    *           schema:
+    *             type: object
+    *             properties:
+    *               banda:
+    *                 type: string
+    *               artista:
+    *                 type: string
+    *               musico:
+    *                 type: string
+    *               albuns:
+    *                 type: array
+    *                 items:
+    *                   type: string
+    *     responses:
+    *       200:
+    *         description: Música atualizada com sucesso
+    *       404:
+    *         description: Música não encontrada
+    */
+   async updateMusica(req, res) {
+      const { id } = req.params;
+      const { banda, artista, musico, albuns } = req.body;
+      try {
+         const musicaAtualizada = await prisma.musica.update({
+            where: { id: Number(id) },
+            data: { banda, artista, musico, albuns },
+         });
+         res.status(200).json(musicaAtualizada);
+      } catch (error) {
+         res.status(404).json({ message: "Música não encontrada", error: error.message });
+      }
+   }
+
+   /**
+    * @swagger
+    * /musica/{id}:
+    *   delete:
+    *     summary: Remove uma música pelo ID
+    *     parameters:
+    *       - in: path
+    *         name: id
+    *         required: true
+    *         schema:
+    *           type: integer
+    *     responses:
+    *       204:
+    *         description: Música removida com sucesso
+    *       404:
+    *         description: Música não encontrada
+    */
+   async deleteMusica(req, res) {
+      const { id } = req.params;
+      try {
+         await prisma.musica.delete({
+            where: { id: Number(id) },
+         });
+         res.status(204).send();
+      } catch (error) {
+         res.status(404).json({ message: "Música não encontrada", error: error.message });
+      }
    }
 }
 
-// Exporta a classe MusicaController para que ela possa ser usada nas rotas da aplicação
 export default MusicaController;
-
